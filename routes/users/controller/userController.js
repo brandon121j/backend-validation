@@ -16,12 +16,34 @@ function checkForEmptyFields(target) {
     }
 }
 
+function checkForSymbol(target) {
+    if (target.match(/[!`\-=@#$%^&*()\[\],.?":;{}|<>]/g)) {
+        return true
+    } else {
+        return false}
+}
+
+function checkIsEmail(target) {
+    if (target.match(/\S+@\S+\.\S+/)) {
+        return false
+    } else {
+        return true
+    }
+}
+
+function checkForPassword(target) {
+    if (target.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$")) {
+        return true
+    } else {
+        return false 
+    }
+}
+
 async function createUser(req, res) {
     const { firstName, lastName, username, email, password } = req.body
 
     let errObj = {};
 
-    // ! ANOTHER MEANS OF NUMBER AND SPECIAL CHARACTER VALIDATION USING THE SAME FUNCTION ABOVE !
     if (checkForNumbersAndSymbols(firstName)) {
         errObj.firstName = "First Name cannot have special character or numbers"
     }
@@ -30,20 +52,24 @@ async function createUser(req, res) {
         errObj.lastName = "Last Name cannot have special character or numbers"
     }
 
+    if (checkForSymbol(username)) {
+        errObj.username = "Username cannot have special characters"
+    }
+
+    if (checkIsEmail(email)) {
+        errObj.email = "Enter a valid email"
+    }
+
+    if (checkForPassword(password)) {
+        errObj.password = "Enter a valid password"
+    }
+
     // More dynamic way of doing the same if statements you used below
     for (let key in body) {
         if (checkForEmptyFields(body[key])) {
             errObj[`${key}`] = `${key} cannot be empty`;
         }
     }
-
-    // if (checkForEmptyFields(firstName)) {
-    //         errObj.firstName = "First Name is required!"
-    //     }
-
-    // if (checkForEmptyFields(lastName)) {
-    //     errObj.lastName = "Last Name is required"
-    // }
 
     if (Object.keys(errObj).length > 0) {
         return res
@@ -54,25 +80,34 @@ async function createUser(req, res) {
         });
     }
 
+    /*
+    if (checkForEmptyFields(firstName)) {
+            errObj.firstName = "First Name is required!"
+        }
 
-    // if (checkForNumbersAndSymbols(firstName)) {
-    //     return res
-    //     .status(500)
-    //     .json({ 
-    //         message: "ERROR",
-    //         error: "First name cannot contain special characters or numbers"
-    //     })
-    // }
+    if (checkForEmptyFields(lastName)) {
+        errObj.lastName = "Last Name is required"
+    }
+
+    if (checkForNumbersAndSymbols(firstName)) {
+        return res
+        .status(500)
+        .json({ 
+            message: "ERROR",
+            error: "First name cannot contain special characters or numbers"
+        })
+    }
     
-    // ! ONE SOLUTION FOR SPECIAL CHARACTER AND NUM VALIDATOR !
-    // if (firstName.match(/[!`\-=@#$%^&*()\[\],.?":;{}|<>1234567890]/g)) {
-    //     res
-    //         .status(500)
-    //         .json({
-    //             message: "ERROR",
-    //             error: "First name cannot contain special characters or numbers"
-    //         })
-    // }
+    ! ONE SOLUTION FOR SPECIAL CHARACTER AND NUM VALIDATOR !
+    if (firstName.match(/[!`\-=@#$%^&*()\[\],.?":;{}|<>1234567890]/g)) {
+        res
+            .status(500)
+            .json({
+                message: "ERROR",
+                error: "First name cannot contain special characters or numbers"
+            })
+    }
+    */
 
     try {
         const createdUser = new User({
