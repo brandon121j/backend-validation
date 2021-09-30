@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../model/User');
 
 function checkForNumbersAndSymbols(target) {
@@ -59,7 +60,7 @@ async function createUser(req, res) {
         errObj.email = "Enter a valid email"
     }
 
-    if (checkPasswordStrength(password)) {
+    if (checkPaswordStrength(password)) {
         errObj.password = "Enter a valid password"
     }
 
@@ -78,6 +79,35 @@ async function createUser(req, res) {
             error: errObj
         });
     }
+
+    try {
+        const createdUser = new User({
+            firstName,
+            lastName,
+            username,
+            email,
+            password 
+        });
+
+        let savedUser = await createdUser.save();
+        res.json({ message: "SUCCESS", payload: savedUser })
+    } 
+    catch(error) {
+        res
+            .status(500)
+            .json({ message: "FAILURE", error: error.message })
+    }
+}
+
+module.exports = {
+    createUser,
+}
+
+
+
+
+
+
 
     /*
     if (checkForEmptyFields(firstName)) {
@@ -107,27 +137,3 @@ async function createUser(req, res) {
             })
     }
     */
-
-    try {
-        const createdUser = new User({
-            firstName,
-            lastName,
-            username,
-            email,
-            password 
-        });
-
-        let savedUser = await createdUser.save();
-
-        res.json({ message: "SUCCESS", payload: savedUser })
-    } 
-    catch(error) {
-        res
-            .status(500)
-            .json({ message: "FAILURE", error: error.message })
-    }
-}
-
-module.exports = {
-    createUser,
-}
