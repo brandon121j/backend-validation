@@ -31,17 +31,16 @@ function checkIsEmail(target) {
     }
 }
 
-function checkForPassword(target) {
-    if (target.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$")) {
-        return true
-    } else {
-        return false 
-    }
+function checkPaswordStrength(target) {
+    var strongRegex = new RegExp(
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[_!@#$%^=-{}[]&*|:;'?.<>`~])(?=.{8,})"
+    );
+    return !strongRegex.test(target);
 }
 
 async function createUser(req, res) {
     const { firstName, lastName, username, email, password } = req.body
-
+    let body = req.body;
     let errObj = {};
 
     if (checkForNumbersAndSymbols(firstName)) {
@@ -60,7 +59,7 @@ async function createUser(req, res) {
         errObj.email = "Enter a valid email"
     }
 
-    if (checkForPassword(password)) {
+    if (checkPasswordStrength(password)) {
         errObj.password = "Enter a valid password"
     }
 
