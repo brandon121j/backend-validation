@@ -1,139 +1,83 @@
-const bcrypt = require('bcryptjs');
+const validator = require('validator');
 const User = require('../model/User');
 
-function checkForNumbersAndSymbols(target) {
-    if (target.match(/[!`\-=@#$%^&*()\[\],.?":;{}|<>1234567890]/g)) {
-        return true
-    } else {
-        return false
-    }
-}
-
-function checkForEmptyFields(target) {
-    if (target.length === 0) {
-        return true
-    } else {
-        return false
-    }
-}
-
-function checkForSymbol(target) {
-    if (target.match(/[!`\-=@#$%^&*()\[\],.?":;{}|<>]/g)) {
-        return true
-    } else {
-        return false}
-}
-
-function checkIsEmail(target) {
-    if (target.match(/\S+@\S+\.\S+/)) {
-        return false
-    } else {
-        return true
-    }
-}
-
-function checkPaswordStrength(target) {
-    var strongRegex = new RegExp(
-    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[_!@#$%^=-{}[]&*|:;'?.<>`~])(?=.{8,})"
-    );
-    return !strongRegex.test(target);
-}
+const {
+    isAlpha,
+    isAlphaNumeric,
+    isEmail,
+    isStrongPassword
+} = require('validator');
 
 async function createUser(req, res) {
-    const { firstName, lastName, username, email, password } = req.body
+    const { firstName, lastName, username, email, password } = req.body;
     let body = req.body;
     let errObj = {};
 
-    if (checkForNumbersAndSymbols(firstName)) {
-        errObj.firstName = "First Name cannot have special character or numbers"
+    if (!isAlpha(firstName)) {
+        errObj.firstName = "First Name cannot have special characters or numbers";
     }
-
-    if (checkForNumbersAndSymbols(lastName)) {
-        errObj.lastName = "Last Name cannot have special character or numbers"
+    
+    if (!isAlpha(lastName)) {
+        errObj.lastName = "Last Name cannot have special characters or numbers";
     }
-
-    if (checkForSymbol(username)) {
-        errObj.username = "Username cannot have special characters"
+    
+    if (!isAlphanumeric(username)) {
+        errObj.username = "Username cannot have special characters";
     }
-
-    if (checkIsEmail(email)) {
-        errObj.email = "Enter a valid email"
+    
+    if (!isEmail(email)) {
+        errObj.email = "please enter a valid email";
     }
-
-    if (checkPaswordStrength(password)) {
-        errObj.password = "Enter a valid password"
-    }
-
-    // More dynamic way of doing the same if statements you used below
-    for (let key in body) {
-        if (checkForEmptyFields(body[key])) {
-            errObj[`${key}`] = `${key} cannot be empty`;
-        }
+    
+    if (!isStrongPassword(password)) {
+        errObj.password =
+        "Your password must contain 1 lowercase, 1 uppercase, 1 number, 1 special character and at least 8 characters long";
     }
 
     if (Object.keys(errObj).length > 0) {
-        return res
-        .status(500)
-        .json({
+        return res.status(500).json({
             message: "ERROR",
             error: errObj
         });
     }
+}
 
+async function login(req, res) {
+    const { email, password } = req.body
+
+    let errObj = {}
+
+    if (isEmpty(password)) {
+        errObj.password = "Password cannot be empty"
+    }
+
+    if (isEmpty(email)) {
+        errObj.email = "Email cannot be empty"
+    }
+
+    if (!isEmail(email)) {
+        errObj.email = "Please enter a valid email"
+    }
+
+    if (Object.keys.keys(errObj).length > 0) {
+        return res.status(500).json({
+            message: "ERROR",
+            error: errObj
+        })
+    }
+
+    let foundUser = await User.findOne({ email: email })
+
+    res.json({ foundUser })
+    
     try {
-        const createdUser = new User({
-            firstName,
-            lastName,
-            username,
-            email,
-            password 
-        });
 
-        let savedUser = await createdUser.save();
-        res.json({ message: "SUCCESS", payload: savedUser })
-    } 
-    catch(error) {
-        res
-            .status(500)
-            .json({ message: "FAILURE", error: error.message })
+    } catch(e) {
+        res.status(500).jason({ message: "ERROR", error: error.message })
     }
 }
 
 module.exports = {
     createUser,
+    login
 }
-
-
-
-
-
-
-
-    /*
-    if (checkForEmptyFields(firstName)) {
-            errObj.firstName = "First Name is required!"
-        }
-
-    if (checkForEmptyFields(lastName)) {
-        errObj.lastName = "Last Name is required"
-    }
-
-    if (checkForNumbersAndSymbols(firstName)) {
-        return res
-        .status(500)
-        .json({ 
-            message: "ERROR",
-            error: "First name cannot contain special characters or numbers"
-        })
-    }
-    
-    ! ONE SOLUTION FOR SPECIAL CHARACTER AND NUM VALIDATOR !
-    if (firstName.match(/[!`\-=@#$%^&*()\[\],.?":;{}|<>1234567890]/g)) {
-        res
-            .status(500)
-            .json({
-                message: "ERROR",
-                error: "First name cannot contain special characters or numbers"
-            })
-    }
-    */
