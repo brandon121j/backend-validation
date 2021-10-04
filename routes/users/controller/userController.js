@@ -2,50 +2,10 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs')
 const User = require('../model/User');
 
-const {
-    isAlpha,
-    isAlphanumeric,
-    isEmpty,
-    isEmail,
-    isStrongPassword
-} = require('validator');
-
-function validRegister(value) {
-    let errObj = {};
-
-    if (!isAlpha(value.firstName)) {
-        errObj.firstName = "First name cannot have any special characters or numbers"
-    }
-
-    if (!isAlpha(value.lastName)) {
-        errObj.lastName = "Last name cannot have any special characters or numbers"
-    }
-
-    if (!isAlphanumeric(value.username)) {
-        errObj.username = "Username cannot have special characters"
-    }
-
-    if (!isEmail(value.email)) {
-        errObj.email = "Please enter a valid email"
-    }
-
-    if (!isStrongPassword(value.password)) {
-        errObj.password = 
-        "Your password must contain 1 lowercase, 1 uppercase, 1 special character"
-    }
-
-    if (Object.keys(errObj).length > 0) {
-        return res
-            .status(500)
-            .json({ message: "ERROR", error: errObj })
-    }
-}
-
 async function createUser(req, res) {
     let body = req.body;
     const { firstName, lastName, username, email, password } = body;
 
-    validRegister(body);
     try {
         let salt = await bcrypt.genSalt(10)
         let hashed = await bcrypt.hash(password, salt)
@@ -64,7 +24,31 @@ async function createUser(req, res) {
 }
 
 async function login(req, res) {
+    try {
+        let foundUser = await User.findOne({ email: email })
 
+        if (!foundUser) {
+            return res
+                .status(500)
+                .json({ message: "ERROR", error: "PLEASE SIGN UP" })
+        } else {
+
+            let comparedPassword = await bcrypt.compare(password, foundUser.password)
+
+            if (!comparedPassword) {
+                return res.status(500).json({
+                    message: "ERROR",
+                    error: "Please check your email and password"
+                })
+            } else {
+                return res.json({ message: "SUCCESS" })
+            }
+        }
+    
+        res.json({ foundUser })
+    } catch(e) {
+        res.status(500).json({ message: "ERROR", error: e.message })
+    }
 }
 
 
