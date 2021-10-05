@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 var express = require('express');
 var router = express.Router();
 const { createUser, login } = require('./controller/userController')
@@ -32,7 +33,15 @@ router.post(
 
 router.post(
   '/profile', function(req, res) {
-    res.json({ token: req.body.token })
+    try {
+      let decodedToken = jwt.verify(req.body.toke, process.env.JWT_SECRET);
+    
+      res.json({ token: decodedToken })
+    } catch(error) {
+      res
+        .status(500)
+        .json({ message: "ERROR", error: error.message })
+    }
   }
 )
 
