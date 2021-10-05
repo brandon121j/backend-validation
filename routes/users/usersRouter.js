@@ -34,7 +34,6 @@ router.post(
   '/profile', function(req, res) {
     res.json({ token: req.body.token })
   }
-
 )
 
 module.exports = router;
