@@ -25,29 +25,30 @@ async function createUser(req, res) {
 
 async function login(req, res) {
     try {
-        let foundUser = await User.findOne({ email: email })
-
+        let foundUser = await User.findOne({ email: email });
+        
         if (!foundUser) {
-            return res
-                .status(500)
-                .json({ message: "ERROR", error: "PLEASE SIGN UP" })
+            return res.status(500).json({
+                message: "error",
+                error: "please go sign up",
+            });
         } else {
-
-            let comparedPassword = await bcrypt.compare(password, foundUser.password)
-
-            if (!comparedPassword) {
-                return res.status(500).json({
-                    message: "ERROR",
-                    error: "Please check your email and password"
-                })
-            } else {
-                return res.json({ message: "SUCCESS" })
+            
+        let comparedPassword = await bcrypt.compare(password, foundUser.password);
+    
+        if (!comparedPassword) {
+            return res.status(500).json({
+            message: "error",
+            error: "Please check your email and password",
+            });
+        } else {
+                return res.json({
+                message: "success",
+                });
             }
         }
-    
-        res.json({ foundUser })
-    } catch(e) {
-        res.status(500).json({ message: "ERROR", error: e.message })
+    } catch (e) {
+        res.status(500).json({ message: "error", error: e.message });
     }
 }
 
