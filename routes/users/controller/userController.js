@@ -1,4 +1,4 @@
-const validator = require('validator');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs')
 const User = require('../model/User');
 
@@ -34,23 +34,32 @@ async function login(req, res) {
             });
         } else {
 
-        let comparedPassword = await bcrypt.compare(password, foundUser.password);
+            let comparedPassword = await bcrypt.compare(password, foundUser.password);
     
-        if (!comparedPassword) {
+            if (!comparedPassword) {
             return res.status(500).json({
-            message: "error",
-            error: "Please check your email and password",
-            });
-        } else {
-                return res.json({
-                message: "success",
+                message: "error",
+                error: "Please check your email and password",
                 });
+            } else {
+                let jwtToken = jwt.sign (
+                    {
+                        email: foundUser.email,
+                        username: foundUser.username
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "24h" }
+                );
+
+                res.json({ message: "SUCCESS", payload: jwtToken });
             }
         }
     } catch (e) {
         res.status(500).json({ message: "error", error: e.message });
     }
 }
+
+
 
 module.exports = {
     createUser,
