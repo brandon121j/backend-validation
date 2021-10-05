@@ -7,7 +7,8 @@ const {
   checkIsEmpty, 
   checkIsUndefined, 
   validateCreateData, 
-  validateLoginData 
+  validateLoginData,
+  jwtMiddleware 
 } = require('./lib/authMiddleWare/index')
 
 /* GET users listing. */
@@ -31,18 +32,6 @@ router.post(
   login
 );
 
-router.post(
-  '/profile', function(req, res) {
-    try {
-      let decodedToken = jwt.verify(req.body.toke, process.env.JWT_SECRET);
-    
-      res.json({ token: decodedToken })
-    } catch(error) {
-      res
-        .status(500)
-        .json({ message: "ERROR", error: error.message })
-    }
-  }
-)
+router.post('/profile', jwtMiddleware);
 
 module.exports = router;
