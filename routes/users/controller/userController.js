@@ -33,7 +33,7 @@ async function login(req, res) {
                 error: "please go sign up",
             });
         } else {
-            
+
         let comparedPassword = await bcrypt.compare(password, foundUser.password);
     
         if (!comparedPassword) {
@@ -51,8 +51,6 @@ async function login(req, res) {
         res.status(500).json({ message: "error", error: e.message });
     }
 }
-
-
 
 module.exports = {
     createUser,
