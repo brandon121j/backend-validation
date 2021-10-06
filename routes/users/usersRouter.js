@@ -8,7 +8,8 @@ const {
   checkIsUndefined, 
   validateCreateData, 
   validateLoginData,
-  jwtMiddleware 
+  jwtMiddleware,
+  validateUpdateData 
 } = require('./lib/authMiddleWare/index')
 
 /* GET users listing. */
@@ -32,8 +33,13 @@ router.post(
   login
 );
 
-router.put('/profile', jwtMiddleware)
+router.put(
+  '/profile', 
+  jwtMiddleware, 
+  checkIsUndefined, 
+  checkIsEmpty,
+  validateUpdateData
+  );
 
-router.post('/profile', jwtMiddleware, checkIsUndefined, checkIsEmpty);
 
 module.exports = router;
