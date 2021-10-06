@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../model/User');
-const errorHandler = require('../../utils/errorHandler');
+const errorHandler = require('../../utils/errorHandler/errorHandler');
 
 async function createUser(req, res) {
     let body = req.body;
@@ -20,7 +20,7 @@ async function createUser(req, res) {
         let savedUser = await createdUser.save();
         res.json({ message: "SUCCESS", savedUser })
     } catch(error) {
-        res.status(500).json({ message: "FAILURE", error: error.message})
+        res.status(500).json({ message: "FAILURE", error: errorHandler(error)})
     }
 }
 
