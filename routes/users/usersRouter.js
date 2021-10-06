@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 var express = require('express');
 var router = express.Router();
 const { createUser, login, updateUser } = require('./controller/userController')
@@ -40,7 +39,7 @@ router.put(
   checkIsEmpty,
   validateUpdateData,
   updateUser
-  );
+);
 
 
 module.exports = router;
