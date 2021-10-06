@@ -6,11 +6,13 @@ function jwtMiddleware(req, res, next) {
 
         if (req.headers && req.headers.authorization) {
             
-            let notDecoded = req.headers.authorization
+            let notDecodedToken = req.headers.authorization;
 
-            let slicedToken = notDecoded.slice(7)
+            let slicedToken = notDecodedToken.slice(7);
 
             let decodedToken = jwt.verify(slicedToken, process.env.JWT_SECRET)
+
+            res.locals.decodedData = decodedToken
 
             next();
         } else {

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 var express = require('express');
 var router = express.Router();
-const { createUser, login } = require('./controller/userController')
+const { createUser, login, updateUser } = require('./controller/userController')
 
 const { 
   checkIsEmpty, 
@@ -38,7 +38,8 @@ router.put(
   jwtMiddleware, 
   checkIsUndefined, 
   checkIsEmpty,
-  validateUpdateData
+  validateUpdateData,
+  updateUser
   );
 
 
