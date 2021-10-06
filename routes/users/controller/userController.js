@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 const User = require('../model/User');
+const errorHandler = require('../../utils/errorHandler');
 
 async function createUser(req, res) {
     let body = req.body;
@@ -66,7 +67,7 @@ async function updateUser(req, res) {
 
         const { password } = req.body
 
-        const decodedData = res.locals
+        const decodedData = res.locals.decodedData
 
         let salt = await bcrypt.genSalt(10)
         let hashedPassword = await bcrypt.hash(password, salt)
