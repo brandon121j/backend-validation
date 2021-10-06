@@ -32,6 +32,8 @@ router.post(
   login
 );
 
-router.post('/profile', jwtMiddleware);
+router.put('/profile', jwtMiddleware)
+
+router.post('/profile', jwtMiddleware, checkIsUndefined, checkIsEmpty);
 
 module.exports = router;

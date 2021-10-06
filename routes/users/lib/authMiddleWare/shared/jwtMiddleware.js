@@ -12,7 +12,7 @@ function jwtMiddleware(req, res, next) {
 
             let decodedToken = jwt.verify(slicedToken, process.env.JWT_SECRET)
 
-            res.json({ message: decodedToken })
+            next();
         } else {
             throw ({ message: "You don't have permission"})
         }
