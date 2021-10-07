@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema(
         },
         password: {
             type: String
-        }
+        },
+        orderHistory: [{ type: mongoose.Schema.ObjectId, ref: 'order' }],
     }, 
     { 
         timeStamps: true
