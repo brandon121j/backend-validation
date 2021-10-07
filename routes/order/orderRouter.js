@@ -5,6 +5,7 @@ const { isAlpha, isInt } = require('validator')
 var { jwtMiddleware } = require('../users/lib/authMiddleWare')
 const Order = require('./model/Order');
 const User = require('../users/model/User')
+const errorHandler = require('../utils/errorHandler/errorHandler')
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -41,13 +42,13 @@ router.post('/create-order', jwtMiddleware, async function(req, res) {
             orderItem,
             orderOwner: 
         })
-        
+
     } catch(error) {
         res.status(500).json({
-            message: "ERROR",
-            error: error.message
+            errorHandler(error)
         })
     }
 
 }
+
 module.exports = router;
