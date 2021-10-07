@@ -35,13 +35,18 @@ router.post('/create-order', jwtMiddleware, async function(req, res) {
             });
         }
     
-    
+        const decodedData = res.locals.decodedData;
+
+        let foundUser = await User.findOne({ email: decodedData.email });
+
         const createdOrder = new Order({
             orderName,
             orderAmount,
             orderItem,
-            orderOwner: 
+            orderOwner: foundUser._id 
         })
+
+        let savedOrder = await createdOrder.save();
 
     } catch(error) {
         res.status(500).json({
@@ -49,6 +54,7 @@ router.post('/create-order', jwtMiddleware, async function(req, res) {
         })
     }
 
-}
+})
+
 
 module.exports = router;
