@@ -48,6 +48,12 @@ router.post('/create-order', jwtMiddleware, async function(req, res) {
 
         let savedOrder = await createdOrder.save();
 
+        foundUser.orderHistory.push(savedOrder._id);
+
+        await foundUser.save();
+
+        res.json({ message: "SUCCESS", createdOrder });
+
     } catch(error) {
         res.status(500).json({
             errorHandler(error)
