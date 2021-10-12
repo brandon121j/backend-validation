@@ -34,8 +34,6 @@ router.get('/get-order', jwtMiddleware, async function(req, res) {
 router.delete('/delete-order-by-id/:id', jwtMiddleware, async function(req, res) {
     try {
 
-        console.log(res.locals)
-
         let deletedOrder = await Order.findByIdAndDelete
 
         if (!deletedOrder) {
@@ -48,11 +46,13 @@ router.delete('/delete-order-by-id/:id', jwtMiddleware, async function(req, res)
 
         let foundUser = await User.findOne({ email: decodedData.email })
 
-        let userOrderHistoryArray = userOrderHistoryArray.filter(
+        let userOrderHistoryArray = foundUser.orderHistory
+
+        let filteredOrderHistoryArray = userOrderHistoryArray.filter(
             item => item._id.toString() !== req.params.id
         )
 
-        foundUser.orderHistory = userOrderHistoryArray
+        foundUser.orderHistory = filteredOrderHistoryArray
 
         await foundUser.save()
 
