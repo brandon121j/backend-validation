@@ -3,6 +3,19 @@ const bcrypt = require('bcryptjs');
 const User = require('../model/User');
 const errorHandler = require('../../utils/errorHandler/errorHandler');
 
+async function getUserInfo(req, res, next) {
+    try {
+        const decodedData = res.locals.decodedData;
+        const foundUser = await User.findOne({ email: decodedData.email })
+        res.json({ message: "SUCCESS", payload: foundUser })
+    } catch(error) {
+        res.status(500).json({ 
+            message: "ERROR",
+            error: errorHandler(error)
+        })
+    }
+}
+
 async function createUser(req, res) {
     let body = req.body;
     const { firstName, lastName, username, email, password } = body;
@@ -97,5 +110,6 @@ async function updateUser(req, res) {
 module.exports = {
     createUser,
     login,
-    updateUser
+    updateUser,
+    getUserInfo
 }
