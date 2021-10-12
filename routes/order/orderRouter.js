@@ -12,6 +12,62 @@ router.get("/", function (req, res, next) {
     res.json({ message: 'order' });
 });
 
+router.get('/get-order', jwtMiddleware, async function(req, res) {
+
+    try {
+
+        let foundOrder = await Order.find();
+
+        res.json({
+            message: "SUCCESS",
+            foundOrder
+        })
+
+
+    } catch(error) {
+        res.json(500).json(
+            errorHandler(error)
+        )
+    }
+});
+
+router.delete('/delete-order-by-id/:id', jwtMiddleware, async function(req, res) {
+    try {
+
+        console.log(res.locals)
+
+        let deletedOrder = await Order.findByIdAndDelete
+
+        if (!deletedOrder) {
+            return res
+                .status(404)
+                .json({ message: "FAILURE", error: "record not found"})
+        }
+
+        const decodedData = res.locals.decodedData
+
+        let foundUser = await User.findOne({ email: decodedData.email })
+
+        let userOrderHistoryArray = userOrderHistoryArray.filter(
+            item => item._id.toString() !== req.params.id
+        )
+
+        foundUser.orderHistory = userOrderHistoryArray
+
+        await foundUser.save()
+
+        res.json({
+            message: "SUCCESS",
+            deleted: deletedOrder
+        })
+
+    } catch(error) {
+        res.status(500).json(
+            errorHandler(error)
+        )
+    }
+})
+
 router.post('/create-order', jwtMiddleware, async function(req, res) {
 
     try {
@@ -19,6 +75,8 @@ router.post('/create-order', jwtMiddleware, async function(req, res) {
         const { orderName, orderAmount, orderItem } = req.body;
 
         let errObj = {}
+
+        console.log(res.locals)
     
         if (!isAlpha(orderName)) {
             errObj.orderName = "Order can only use letters"
@@ -55,9 +113,9 @@ router.post('/create-order', jwtMiddleware, async function(req, res) {
         res.json({ message: "SUCCESS", createdOrder });
 
     } catch(error) {
-        res.status(500).json({
+        res.status(500).json(
             errorHandler(error)
-        })
+        )
     }
 
 })
