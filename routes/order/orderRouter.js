@@ -5,7 +5,8 @@ const { isAlpha, isInt } = require('validator')
 var { jwtMiddleware } = require('../users/lib/authMiddleWare')
 const Order = require('./model/Order');
 const User = require('../users/model/User')
-const errorHandler = require('../utils/errorHandler/errorHandler')
+const errorHandler = require('../utils/errorHandler/errorHandler');
+const { findByIdAndUpdate } = require("./model/Order");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -118,6 +119,29 @@ router.post('/create-order', jwtMiddleware, async function(req, res) {
         )
     }
 
+})
+
+router.put('/update-order-by-id/:id', jwtMiddleware, async function (req, res) {
+
+    try {
+        let foundOrder = await Order.findById(req.params.id)
+
+        if (!foundOrder) {
+            res.status(404).json({
+                message: "FAILURE",
+                error: "Order not found"
+            })
+        } else {
+
+            let updatedOrder = findByIdAndUpdate(req.params.id, req.body, { new: true })
+
+            res.json({ message: "SUCCESS", payload: updatedOrder})
+        }
+    } catch(error) {
+        res.status(500).json(
+            errorHandler(error)
+        )
+    }
 })
 
 
