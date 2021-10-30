@@ -1,6 +1,12 @@
 var express = require('express');
 var router = express.Router();
-const { createUser, login, updateUser, getUserInfo } = require('./controller/userController')
+
+const { 
+  createUser, 
+  login, 
+  updateUser, 
+  getUserInfo 
+} = require('./controller/userController')
 
 const { 
   checkIsEmpty, 
