@@ -37,7 +37,7 @@ async function createUser(req, res) {
 		let savedUser = await createdUser.save();
 		res.json({ message: "SUCCESS", savedUser });
 	} catch (error) {
-		res.status(500).json({ message: "FAILURE", error: errorHandler(error) });
+		errorHandler(error);
 	}
 }
 
@@ -73,7 +73,7 @@ async function login(req, res) {
 			}
 		}
 	} catch (e) {
-		res.status(500).json({ message: "error", error: e.message });
+		errorHandler(e);
 	}
 }
 
@@ -99,10 +99,7 @@ async function updateUser(req, res) {
 			payload: updatedUser,
 		});
 	} catch (error) {
-		res.status(500).json({
-			message: "ERROR",
-			error: error.message,
-		});
+		errorHandler(error);
 	}
 }
 

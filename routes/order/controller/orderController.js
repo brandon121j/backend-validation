@@ -92,7 +92,7 @@ async function createOrder(req, res) {
 
 		res.json({ message: "SUCCESS", createdOrder });
 	} catch (error) {
-		res.status(500).json(errorHandler(error));
+		errorHandler(error)
 	}
 }
 
