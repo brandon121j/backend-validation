@@ -36,8 +36,8 @@ async function createUser(req, res) {
 		});
 		let savedUser = await createdUser.save();
 		res.json({ message: "SUCCESS", savedUser });
-	} catch (error) {
-		errorHandler(error);
+	} catch (e) {
+		errorHandler(e);
 	}
 }
 
@@ -98,8 +98,8 @@ async function updateUser(req, res) {
 			message: "SUCCESS",
 			payload: updatedUser,
 		});
-	} catch (error) {
-		errorHandler(error);
+	} catch (e) {
+		errorHandler(e);
 	}
 }
 
